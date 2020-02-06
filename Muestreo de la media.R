@@ -36,11 +36,18 @@ for (i in seq_along(medias_100)) {
   medias_100[i] <- mean(sample(x = pop, size = 100))
 }
 
-#NOTA DE R: En lugar de la función `seq_along`se puede usar una notación más convencional en otros lenguajes como for (i in 1:1000), que significa "repite esta operación en índices que van del 1 al 1000 en saltos de 1" que es una manera sofisticada de decir "repite esta operación 1000 veces"  
+#NOTA DE R: En lugar de la función `seq_along`se puede usar una notación más convencional en otros lenguajes como for (i in 1..1000) o for (i in 1:1000) o for (i in range(1000)), que significa "repite esta operación en índices que van del 1 al 1000 en saltos de 1" que es una manera sofisticada de decir "repite esta operación 1000 veces"  
 
 # Representamos el histograma
 
 hist(medias_100, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105))
+
+#NOTA DE R: En lugar de usar un bucle se puede usar la función `replicate`, una de las funciones de la familia `apply`, las cuales aplican una función a un vector de valores, que es lo mismo que hace un bucle cuando _aplica_ de manera repetida la misma operación a un conjunto de valores representado por un vector. En este caso estamos haciendo algo más sencillo, repetir un número de veces una instrucción encapsulada en una función, en este caso que nos extraiga de manera repetida una muestra de una población y calcule su media. Así que `replicate` en nuestro ejemplo repite 1000 veces la operación descrita arriba.
+#Este tipo de operaciones se realiza muchas veces en estadística, ya que de esa manera hacemos _simulaciones_, repetir muchas veces realizaciones de una distribución de probabilidad o un fenómeno cuyo resultado sea incierto (lanzar un dado 50000 veces)
+
+medias_100_2 <- replicate(expr = mean(sample(x = pop, size = 100)), n = 1000)
+
+hist(medias_100_2, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105))
 
 #EJERCICIO: ¿Como interpreta el histograma? ¿Representa una distribución de qué?
 
@@ -70,10 +77,10 @@ for (i in seq_along(medias_250000)) {
 #graphics.off()
 
 par(mfrow=c(2,2))
-hist(medias_100, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105))
-hist(medias_10000, main = "Tamaño de muestra N=10000", xlab = "", ylab = "Frecuencia", xlim = c(99,101))
-hist(medias_100000, main = "Tamaño de muestra N=100000", xlab = "", ylab = "Frecuencia", xlim = c(99.5,100.5))
-hist(medias_250000, main = "Tamaño de muestra N=250000", xlab = "", ylab = "Frecuencia", xlim = c(99.7,100.3))
+hist(medias_100, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105));abline(v = 100, lty = 2, lwd = 3, col = "red")
+hist(medias_10000, main = "Tamaño de muestra N=10000", xlab = "", ylab = "Frecuencia", xlim = c(99,101));abline(v = 100, lty = 2, lwd = 3, col = "red")
+hist(medias_100000, main = "Tamaño de muestra N=100000", xlab = "", ylab = "Frecuencia", xlim = c(99.5,100.5));abline(v = 100, lty = 2, lwd = 3, col = "red")
+hist(medias_250000, main = "Tamaño de muestra N=250000", xlab = "", ylab = "Frecuencia", xlim = c(99.7,100.3));abline(v = 100, lty = 2, lwd = 3, col = "red")
 
 #EJERCICIO: ¿Qué puede comentar acerca de como evoluciona la amplitud de las distribuciones a medida que aumenta el tamaño de la muestra?
 
