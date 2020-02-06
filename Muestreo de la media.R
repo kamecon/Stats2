@@ -33,7 +33,7 @@ medias_100 <- vector(length = 1000)
 #NOTA DE R: El uso de bucles en R no es muy popular o aconsejado, pero para casos no complejos no representa un problema
 
 for (i in seq_along(medias_100)) {
-  medias_100[i] <- mean(sample(x = pop, size = 100))
+  medias_100[i] <- mean(sample(x = pop, size = 100, replace = TRUE))
 }
 
 #NOTA DE R: En lugar de la función `seq_along`se puede usar una notación más convencional en otros lenguajes como for (i in 1..1000) o for (i in 1:1000) o for (i in range(1000)), que significa "repite esta operación en índices que van del 1 al 1000 en saltos de 1" que es una manera sofisticada de decir "repite esta operación 1000 veces"  
@@ -45,7 +45,7 @@ hist(medias_100, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuenci
 #NOTA DE R: En lugar de usar un bucle se puede usar la función `replicate`, una de las funciones de la familia `apply`, las cuales aplican una función a un vector de valores, que es lo mismo que hace un bucle cuando _aplica_ de manera repetida la misma operación a un conjunto de valores representado por un vector. En este caso estamos haciendo algo más sencillo, repetir un número de veces una instrucción encapsulada en una función, en este caso que nos extraiga de manera repetida una muestra de una población y calcule su media. Así que `replicate` en nuestro ejemplo repite 1000 veces la operación descrita arriba.
 #Este tipo de operaciones se realiza muchas veces en estadística, ya que de esa manera hacemos _simulaciones_, repetir muchas veces realizaciones de una distribución de probabilidad o un fenómeno cuyo resultado sea incierto (lanzar un dado 50000 veces)
 
-medias_100_2 <- replicate(expr = mean(sample(x = pop, size = 100)), n = 1000)
+medias_100_2 <- replicate(expr = mean(sample(x = pop, size = 100, replace = TRUE)), n = 1000)
 
 hist(medias_100_2, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105))
 
@@ -59,17 +59,17 @@ hist(medias_100_2, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuen
 
 medias_10000 <- vector(length = 1000)
 for (i in seq_along(medias_10000)) {
-  medias_10000[i] <- mean(sample(x = pop, size = 10000))
+  medias_10000[i] <- mean(sample(x = pop, size = 10000, replace = TRUE))
 }
 
 medias_100000 <- vector(length = 1000)
 for (i in seq_along(medias_100000)) {
-  medias_100000[i] <- mean(sample(x = pop, size = 100000))
+  medias_100000[i] <- mean(sample(x = pop, size = 100000, replace = TRUE))
 }
 
 medias_250000 <- vector(length = 1000)
 for (i in seq_along(medias_250000)) {
-  medias_250000[i] <- mean(sample(x = pop, size = 250000))
+  medias_250000[i] <- mean(sample(x = pop, size = 250000, replace = TRUE))
 }
 
 # Representamos graficamente los 4 ejercicios
