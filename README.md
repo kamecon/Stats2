@@ -6,3 +6,4 @@ Materiales del curso de introducción a la inferencia
 - Muestreo
   - Distribución muestral de la media
   - Teorema central del límite
+  - Intervalos de confianza
