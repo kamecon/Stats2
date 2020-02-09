@@ -1,24 +1,31 @@
-### Distribución de las medias muestrales en el muestreo ###
+### Distribución de las medias muestrales en el muestreo ####
 
 # A continuación creamos una población de tamaño 1.000.000 que se distribuye como una normal con media 100 y desviación estandar 15
 
 pop <- rnorm(1000000, mean = 100, sd = 15)
 
-# Representamos la población mediante un histograma
+# Representamos la población mediante un histograma. Esta es la distribución de la *población*
 
-hist(pop, freq = FALSE, breaks = 20, main = "Histograma y densidad de la Población", xlab = "", ylab = "Frecuencia Relativa"); curve(dnorm(x, mean = mean(pop), sd = sd(pop)), add=TRUE, col="darkblue")
+hist(pop, freq = FALSE, breaks = 20, main = "Histograma y densidad de la Población", xlab = "", ylab = "Frecuencia Relativa", ylim = c(0,0.03)); curve(dnorm(x, mean = mean(pop), sd = sd(pop)), add=TRUE, col="darkblue")
 
 # Tomamos una muestra de tamaño 100 de la población, es decir, seleccionamos de manera aleatoria 100 elementos de la población
 
 sample1 <- sample(x = pop, size = 100)
 
+#Esta es la Distribución de la *muestra*
+
+hist(sample1, main = "Muestra de tamaño 100", xlab = "", ylab = "Frecuencia")
+
 #EJERCICIO: Calcule en la consola varias veces la media repitiendo la instrucción anterio y usando la función `mean()`
 
-# Tomamos más muestras de mayor tamaño de la población 
+# Tomamos una muestra de mayor tamaño de la población y analizamos su distribución
 
-sample2 <- sample(x = pop, size = 10000)
 sample3 <- sample(x = pop, size = 100000)
-sample4 <- sample(x = pop, size = 250000)
+
+hist(sample3, main = "Muestra de tamaño 100000", xlab = "", ylab = "Frecuencia", probability = TRUE, ylim = c(0,0.03)) curve(dnorm(x, mean = mean(sample3), sd = sd(sample3)), add=TRUE, col="darkblue")
+abline(v = mean(sample3), lty = 2, lwd = 3, col = "red")
+
+#EJERCICIO: ¿La distribución de la muestra se parece a la distribución de la población?
 
 # Vamos a repetir 1000 veces (¡!) el proceso de tomar una muestra de tamaño 100, y para cada muestra calculamos la media. Haremos esto empleando un bucle (loop)
 
@@ -36,7 +43,7 @@ for (i in seq_along(medias_100)) {
   medias_100[i] <- mean(sample(x = pop, size = 100, replace = TRUE))
 }
 
-#NOTA DE R: En lugar de la función `seq_along`se puede usar una notación más convencional en otros lenguajes como for (i in 1..1000) o for (i in 1:1000) o for (i in range(1000)), que significa "repite esta operación en índices que van del 1 al 1000 en saltos de 1" que es una manera sofisticada de decir "repite esta operación 1000 veces"  
+#NOTA DE R: En lugar de la función `seq_along`se puede usar una notación más convencional en otros lenguajes como for (i in 1..1000) o for (i in 1:1000) o for i in range(1000), que significa "repite esta operación en índices que van del 1 al 1000 en saltos de 1" que es una manera sofisticada de decir "repite esta operación 1000 veces"  
 
 # Representamos el histograma
 
@@ -45,7 +52,9 @@ hist(medias_100, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuenci
 #NOTA DE R: En lugar de usar un bucle se puede usar la función `replicate`, una de las funciones de la familia `apply`, las cuales aplican una función a un vector de valores, que es lo mismo que hace un bucle cuando _aplica_ de manera repetida la misma operación a un conjunto de valores representado por un vector. En este caso estamos haciendo algo más sencillo, repetir un número de veces una instrucción encapsulada en una función, en este caso que nos extraiga de manera repetida una muestra de una población y calcule su media. Así que `replicate` en nuestro ejemplo repite 1000 veces la operación descrita arriba.
 #Este tipo de operaciones se realiza muchas veces en estadística, ya que de esa manera hacemos _simulaciones_, repetir muchas veces realizaciones de una distribución de probabilidad o un fenómeno cuyo resultado sea incierto (lanzar un dado 50000 veces)
 
-medias_100_2 <- replicate(expr = mean(sample(x = pop, size = 100, replace = TRUE)), n = 1000)
+medias_100_2 <- replicate(expr = mean(sample(x = pop, size = 100)), n = 1000)
+
+
 
 hist(medias_100_2, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuencia", xlim = c(95,105))
 
@@ -54,6 +63,8 @@ hist(medias_100_2, main = "Tamaño de muestra N=100", xlab = "", ylab = "Frecuen
 #EJERCICIO: ¿Como interpreta la media?
 
 #EJERCICIO: ¿Qué diferencias en término de amplitud observa con la distribución de la población?
+
+#Lo anterior es la Distribución de la *media muestral* (en términos generales la distribución del estadístico muestral). Este es un modelo del parámetro (desconocido) de la población
 
 #Repetimos el ejercicio anterior con muestras de mayor tamaño
 
@@ -85,3 +96,52 @@ hist(medias_250000, main = "Tamaño de muestra N=250000", xlab = "", ylab = "Fre
 #EJERCICIO: ¿Qué puede comentar acerca de como evoluciona la amplitud de las distribuciones a medida que aumenta el tamaño de la muestra?
 
 #EJERCICIO: ¿Cual es la interpretación estadística de lo anterior?
+
+### Distribución de la varianza muestral #### 
+
+# A diferencia de antes creamos una lista en lugra de un vector, en cada elemento de la lista guardamos las 1000 realizaciones de la varianza de la muestra
+
+varianza_vec <- list()
+tamaño <- c(40,100,1000,10000,100000,500000)
+for (j in tamaño) {
+  for (i in 1:1000) {
+    varianza_vec[[as.character(j)]][i] <- var(sample(x = pop, size = tamaño, replace = TRUE))
+  }
+}
+
+# Usaremos algunas funciones y librerías útiles de la librería `tidyverse`
+
+library(tidyverse)
+
+# Transformamos la lista en una tabla (arreglo rectangular)
+
+varianza <- as.tibble(varianza_vec)
+
+# Convertimos la tabla en formato long o "tidy"
+
+varianza2 <- varianza %>%
+  gather(key = "Tamaño") 
+
+varianza2$Tamaño <- factor(x = varianza2$Tamaño, levels = c(40,100,1000,10000,100000,500000))
+
+# Hacemos el gráfico usando la librería ggplot
+
+varianza_grafico <- ggplot(data = varianza2) +
+  geom_histogram(aes(x=value, y=..density..), fill="white", colour="black") +
+  geom_density(aes(x=value)) +
+  facet_wrap(~Tamaño) +
+  geom_vline(xintercept = 225, linetype="dotted", color = "blue", size=1.5) +
+  labs(title = 'Distribución muestral de la varianza',  x ='Varianza', y = 'Frecuencia') +
+  theme(plot.title=element_text(face="bold", hjust=0.5, vjust=2, colour="#3C3C3C"))
+
+varianza_grafico
+
+# Verificamos la normalidad de la distribución muestral de la varianza
+
+varianza %>% 
+  ggplot(aes(sample=`5e+05`))+ stat_qq()+ geom_qq_line()
+
+ggplot(varianza2, aes(sample = value)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_wrap(~Tamaño)
