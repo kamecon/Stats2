@@ -8,3 +8,4 @@ Materiales del curso de introducción a la inferencia
   - Teorema central del límite
   - Intervalos de confianza
   - Distribución muestral de la varianza
+  - Remuestreo (Bootsrapping)
