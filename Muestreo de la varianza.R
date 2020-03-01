@@ -41,8 +41,8 @@ varianza_grafico
 
 # Verificamos la normalidad de la distribución muestral de la varianza
 
-varianza %>% 
-  ggplot(aes(sample=`5e+05`))+ stat_qq()+ geom_qq_line()
+#varianza %>% 
+ # ggplot(aes(sample=`5e+05`))+ stat_qq()+ geom_qq_line()
 
 ggplot(varianza2, aes(sample = value)) +
   stat_qq() +
@@ -113,7 +113,11 @@ chi_tib <- as_tibble(chi_vec)
 chi_tib2 <- chi_tib %>%
   gather(key = "df") 
 
-chi_tib2$df <- factor(x = chi_tib2$df, levels = chi_tib2$df %>% unique() %>% as.numeric())
+niveles <- chi_tib2$df %>% 
+  unique() %>%
+  as.numeric()
+
+chi_tib2$df <- factor(x = chi_tib2$df, levels = niveles)
 
 chi_grafico <- ggplot(data = chi_tib2) +
   geom_histogram(aes(x=value, y=..density..), fill="white", colour="black") +
@@ -126,18 +130,24 @@ chi_grafico
 
 chi_grafico2 <- ggplot(data = chi_tib2) +
   geom_density(aes(x=value, group=df, colour=df)) +
-  labs(title = 'Distribuciones chi cuadrado con distintos grados de libertad',  x ='', y = 'Frecuencia') +
-  theme(plot.title=element_text(face="bold", hjust=0.5, vjust=2, colour="#3C3C3C"))+
+  labs(title = 'Distribuciones chi cuadrado (simulación) con distintos grados de libertad',  x ='', y = 'Frecuencia') +
+  theme(plot.title=element_text(hjust=0.5, vjust=2, colour="#3C3C3C"))+
   theme(legend.position = "bottom")
 
 chi_grafico2
 
+
 chi_grafico3 <- ggplot(NULL, aes(x = x, colour = df)) +
   labs(title = 'Distribuciones chi cuadrado (teóricas) con distintos grados de libertad',  x ='', y = '') +
-  stat_function(data =  data.frame(x = c(0, 40), df = factor(2)), fun = dchisq, args = list(df = 2)) +
-  stat_function(data =  data.frame(x = c(0, 40), df = factor(5)), fun = dchisq, args = list(df = 5)) +
-  stat_function(data =  data.frame(x = c(0, 40), df = factor(10)), fun = dchisq, args = list(df = 10)) +
-  stat_function(data =  data.frame(x = c(0, 40), df = factor(20)), fun = dchisq, args = list(df = 20)) +
+  stat_function(data =  data.frame(x = c(0, 40), df = factor(2, levels = niveles)), fun = dchisq, args = list(df = 2)) +
+  stat_function(data =  data.frame(x = c(0, 40), df = factor(5, levels = niveles)), fun = dchisq, args = list(df = 5)) +
+  stat_function(data =  data.frame(x = c(0, 40), df = factor(10, levels = niveles)), fun = dchisq, args = list(df = 10)) +
+  stat_function(data =  data.frame(x = c(0, 40), df = factor(20, levels = niveles)), fun = dchisq, args = list(df = 20)) +
+  theme(plot.title=element_text(hjust=0.5, vjust=2, colour="#3C3C3C")) +
   theme(legend.position = "bottom")
 
 chi_grafico3
+
+library(patchwork)
+
+chi_grafico2 / chi_grafico3
