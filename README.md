@@ -9,3 +9,4 @@ Materiales del curso de introducción a la inferencia
   - Intervalos de confianza
   - Distribución muestral de la varianza
   - Remuestreo (Bootsrapping)
+  - zscore (ejercicios de búsqueda en tablas de la normal y la chi cuadrado)
