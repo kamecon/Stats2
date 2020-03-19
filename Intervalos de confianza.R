@@ -62,3 +62,15 @@ axis(1)
 axis(2)
 title(xlab="Número de simulación",ylab="Media",main=paste0("Tamaño de la muestra = ",100),font.main=1)
 abline(h=100,lty=2)
+
+# Gráfico dinámico
+
+# Usamos la librería `animation` que posee algunas animaciones de temas estadísticos (también de optimización, métodos numéricos, machine learning, etc.)
+
+library("animation")
+
+# Definimos las opciones, primero el intervalo de tiempo entre cada iteración y luego el número de iteraciones, que en nuestro caso es el número de simulaciones
+ani.options(interval = 0.1, nmax = 100)
+
+# Creamos simulaciones de intervalos de confianza del 95%
+conf.int(0.9, main = "Intervalos de confianza del 95%")
