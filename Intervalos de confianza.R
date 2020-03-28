@@ -74,3 +74,75 @@ ani.options(interval = 0.1, nmax = 100)
 
 # Creamos simulaciones de intervalos de confianza del 95%
 conf.int(0.9, main = "Intervalos de confianza del 95%")
+
+
+# Intervalos de confianza (ejercicios)
+
+library(ggplot2)
+
+# Definimos los datos del problema (Ejemplo 8.4 del libro, página 307)
+media <- 198
+des_tip <- 12
+n <- 25
+
+confianza <- 0.99
+alpha_2 <- (1-confianza)/2
+z_alhpa_2 <- qnorm(alpha_2, lower.tail = FALSE)
+ME <- z_alhpa_2*(des_tip / sqrt(n))
+Limite_inferior <- media - ME
+Limite_superior <- media + ME
+
+#Mostramos los datos en una tabla
+
+data.frame(
+  "Concepto" = c("Nivel de confianza", "Valor Z", "Limite inferior", "Limite superior"),
+  "Datos"=c(confianza, z_alhpa_2, Limite_inferior, Limite_superior)
+  )
+
+# Hacemos el gráfico usando ggplot2
+
+# Creamos dos vectores, uno con los datos de la variable (empleo un vector que va desde la media menos 5 veces la desviación típica muestral hasta la media mas 5 veces la desviación típica muestral)
+
+lim_inf_graf <- media - 5*(des_tip / sqrt(n))
+lim_sup_graf <- media + 5*(des_tip / sqrt(n))
+
+x <- seq(from = lim_inf_graf, to = lim_sup_graf, by = 0.05 )
+
+# Creamos la distribución normal estándar basados en los datos creados en el paso anterior
+y <- dnorm((x - media) / (des_tip / sqrt(n)))
+
+# Juntamos ambos vectores y hacemos una tabla (data frame). La libreria ggplot solo toma como argumentos arreglos tabulates de este tipo
+df_dist <- data.frame(x=x, y=y)
+
+# Gráfico
+ggplot(df_dist, aes(x = x, y = y)) +
+  geom_line()  +
+  geom_vline(xintercept = Limite_inferior) +
+  geom_vline(xintercept = Limite_superior) +
+  geom_area(mapping = aes(ifelse(x>Limite_inferior & x<Limite_superior,x,0)), fill = "turquoise2", alpha = 0.8) +
+  xlim(lim_inf_graf,lim_sup_graf) +
+  annotate("text", x = media, y = 0.15, label = paste0(as.character(confianza*100), "% de confianza"))
+
+
+# Intevalos de confianza con varianza desconocida
+
+# Distribución t
+# Fuente: https://www.statmethods.net/advgraphs/probability.html
+
+# Creamos una distribución normal para comparar con las distribuciones t
+x <- seq(-4, 4, length=100)
+normal <- dnorm(x)
+
+# Creamos varias distribuciones t con distintos grados de libertad y representamos junto a una normal
+grados_libertad <- c(1, 3, 8, 30)
+colores <- c("red", "blue", "darkgreen", "gold", "black")
+labels <- c("df=1", "df=3", "df=8", "df=30", "normal")
+
+plot(x, normal, type="l", lty=2, xlab=" ",
+     ylab=" ", main="Comparaciones Distribuciones t")
+
+for (i in 1:4){
+  lines(x, dt(x,grados_libertad[i]), lwd=2, col=colores[i])
+}
+
+legend("topright", inset=.05, title="Distribuciones", labels, lwd=2, lty=c(1, 1, 1, 1, 2), col=colores)
