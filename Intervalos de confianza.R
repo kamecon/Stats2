@@ -6,9 +6,9 @@ pop <- rnorm(1000000, mean = 100, sd = 15)
 
 # Para calcular un intervalo de confianza del 95% de la población usamos la función `qnorm` en el caso de una función normal
 
-qnorm(p = c(0.25, .975), mean = 100, sd = 15)
+qnorm(p = c(0.025, .975), mean = 100, sd = 15)
 
-# Para calcular los intervalos de confianza de la *media* vamos a utilizar la función `ciMean` de la librería `lsr` correspondiente a uno de los libros de la bibliografía "Learning statistics with R" https://learningstatisticswithr.com/lsr-0.6.pdf
+# Para calcular los intervalos de confianza de la *media muestral* vamos a utilizar la función `ciMean` de la librería `lsr` correspondiente a uno de los libros de la bibliografía "Learning statistics with R" https://learningstatisticswithr.com/lsr-0.6.pdf
 
 #Cargamos la librería
 
@@ -127,13 +127,37 @@ ggplot(df_dist, aes(x = x, y = y)) +
 # Intevalos de confianza con varianza desconocida
 
 # Distribución t
-# Fuente: https://www.statmethods.net/advgraphs/probability.html
 
-# Creamos una distribución normal para comparar con las distribuciones t
+# Creamos una distribución chi cuadrado a partir de su definición, primero creamos una chi cuadrado al igual que en la sección anterior, simulamos la suma de una sumatoria de variables normales estandar al cuadrado
+
+chicuadrado <- vector()
+
+for (i in 1:1000) {
+  chicuadrado[i] <- sum(rnorm(10)^2)
+}
+
+# Esta sería la distribución chi cuadrado
+
+hist(chicuadrado, xlab = "", ylab = "Frecuencia", main = "Distribución Chi Cuadrado simulada", breaks = 30)
+
+# Teniendo una chi cuadrado, creamos una distribución t a partir de su definición, primero creamos una chi cuadrado "corregida" que no es más que la chi cuadrado que hemos creado dividida por sus grados de libertad.
+
+chi_corregida <- chicuadrado / (length(chicuadrado) - 1)
+
+# La distribución t se obtiene de la división de una normal estándar entre la raíz cuadrada de una chi cuadrado entre sus grados de libertad, la chi cuadrada que hemos construido arriba
+
+t <- rnorm(1000) / sqrt(chi_corregida) 
+
+hist(t, xlab = "", ylab = "Frecuencia", main = "Distribución t simulada", breaks = 30)
+
+
+# Creamos una distribución normal para comparar con las distribuciones t. Fuente: https://www.statmethods.net/advgraphs/probability.html
+
 x <- seq(-4, 4, length=100)
 normal <- dnorm(x)
 
 # Creamos varias distribuciones t con distintos grados de libertad y representamos junto a una normal
+
 grados_libertad <- c(1, 3, 8, 30)
 colores <- c("red", "blue", "darkgreen", "gold", "black")
 labels <- c("df=1", "df=3", "df=8", "df=30", "normal")
