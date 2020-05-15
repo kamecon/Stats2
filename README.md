@@ -15,4 +15,6 @@ Materiales del curso de introducción a la inferencia
   - Soluciones ejercicios impares capítulos 8 y 9
 - Contraste de hipótesis
   - Definición e intuición
-  - Ejemplos capítulo 10 resueltos
+  - Ejemplos capítulo 10 (contraste de hipótesis de una población) resueltos
+  - Ejemplos capítulo 11 (contraste de hipótesis de dos poblaciones) resueltos
+  - Plantillas capítulos 10 y 11
