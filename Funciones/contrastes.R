@@ -114,25 +114,48 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
   
   if(tipo=="bilateral") {
     
-    tabla <- data.frame(
+    tablon <- data.frame(
       "Concepto" = c("Valor", "Valor crítico superior", "Valor crítico inferior", "Media muestral", "Límite inferior", "Límite superior",  "p-valor", "significancia"),
       "Datos"=c(valor, tabla*(-1), tabla, media_muestral, critico1, critico2, pvalor, (significancia/2))
     )
     
-    tabla$Datos <-  round(tabla$Datos, digits = 4)
+    tablon$Datos <-  round(tablon$Datos, digits = 4)
+    rownames(tablon) <- tablon[,1]
+    tablon[,1] <- NULL
+    colnames(tablon) <- ""
     
-    return(tabla)
+    return(tablon)
     
   } else {
   
-  tabla <- data.frame(
+  tablon <- data.frame(
     "Concepto" = c("Estadistico contraste", "Valor crítico", "Media muestral", "Limite", "p-valor", "significancia"),
     "Datos"=c(valor, tabla, media_muestral, critico, pvalor, significancia)
   )
   
-  tabla$Datos <-  round(tabla$Datos, digits = 4)
+  tablon$Datos <-  round(tablon$Datos, digits = 4)
+  rownames(tablon) <- tablon[,1]
+  tablon[,1] <- NULL
+  colnames(tablon) <- ""
   
-  return(tabla)
+  if(tipo == "inferior"){
+    
+    p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+      stat_function(fun = dnorm,  size = 1.5) + geom_vline(xintercept = valor, color="red", linetype="dashed", size=1.5) + 
+      stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(-4,tabla)) + 
+      annotation_custom(tableGrob(tablon), xmin=-4, xmax=-2, ymin=0.2, ymax=0.4) +
+      ggtitle("Contraste de hipótesis de la media", subtitle = paste0("Cola ", tipo)) +
+      theme_classic() } else {
+        
+    p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+          stat_function(fun = dnorm, size = 1.5) + geom_vline(xintercept = valor, color="red", linetype="dashed", size=1.5) + 
+          stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(tabla,4)) + 
+          annotation_custom(tableGrob(tablon), xmin=-4, xmax=-2, ymin=0.2, ymax=0.4) +
+          ggtitle("Contraste de hipótesis de la media", subtitle = paste0("Cola ", tipo)) +
+          theme_classic()
+      }
+  
+  return(list(Resumen =tablon,p1))
   
   }
 }
@@ -157,7 +180,7 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
     confianza2 <- significancia
     tabla_z <- qnorm(p = confianza2, lower.tail = FALSE)
     valor <- (proporcion_muestral - proporcion_poblacional)/dt
-    critico <- proporcion_poblacional - tabla_z*dt
+    critico <- proporcion_poblacional + tabla_z*dt
     pvalor <- pnorm(valor, lower.tail = FALSE)
     
     }
@@ -199,6 +222,9 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
       )
       
       tabla$Datos <-  round(tabla$Datos, digits = 4)
+      rownames(tabla) <- tabla[,1]
+      tabla[,1] <- NULL
+      colnames(tabla) <- ""
       
       return(tabla) } else {
         
@@ -208,11 +234,33 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
         )
         
         tabla$Datos <-  round(tabla$Datos, digits = 4)
+        rownames(tabla) <- tabla[,1]
+        tabla[,1] <- NULL
+        colnames(tabla) <- ""
         
-        return(tabla)
+        if(tipo == "inferior"){
+        
+        p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+          stat_function(fun = dnorm,  size = 1.5) + geom_vline(xintercept = valor, color="red", linetype="dashed", size=1.5) + 
+          stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(-4,tabla_z)) + 
+          annotation_custom(tableGrob(tabla), xmin=-4, xmax=-2, ymin=0.2, ymax=0.4) +
+          ggtitle("Contraste de hipótesis de la proporción", subtitle = paste0("Cola ", tipo)) +
+          theme_classic() } else {
+          
+        p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+              stat_function(fun = dnorm, size = 1.5) + geom_vline(xintercept = valor, color="red", linetype="dashed", size=1.5) + 
+              stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(tabla_z,4)) + 
+              annotation_custom(tableGrob(tabla), xmin=-4, xmax=-2, ymin=0.2, ymax=0.4) +
+              ggtitle("Contraste de hipótesis de la proporción", subtitle = paste0("Cola ", tipo)) +
+              theme_classic()
+          }
+        
+        return(list(Resumen =tabla,p1))
         
       }
     
   }  
     
 }
+
+
