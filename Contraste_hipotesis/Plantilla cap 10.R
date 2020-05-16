@@ -166,7 +166,7 @@ significancia <-
 confianza2 <- significancia
 tabla_z <- qnorm(p = confianza2, lower.tail = FALSE)
 valor <- (proporcion_muestral - proporcion_poblacional)/dt
-critico <- proporcion_poblacional - tabla_z*dt
+critico <- proporcion_poblacional + tabla_z*dt
 pvalor <- pnorm(valor, lower.tail = FALSE)
 
 
