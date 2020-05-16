@@ -264,3 +264,12 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
 }
 
 
+
+# Ejemplos
+
+contraste_hipotesis1(media = 2400, media_muestral = 3593, dtd = 4919, significancia = 0.05, n = 134,estadistico = "media", tipo = "superior")
+contraste_hipotesis1(media = 2400, media_muestral = 3593, dtd = 4919, significancia = 0.05, n = 134,estadistico = "media", tipo = "superior")
+contraste_hipotesis1(media = 5, media_muestral = 4.962, dtc = 0.1, significancia = 0.05, n = 16,estadistico = "media", tipo = "inferior")
+contraste_hipotesis1(media = 80, media_muestral = 83, dtc = 8, significancia = 0.05, n = 25,estadistico = "media", tipo = "superior")
+contraste_hipotesis1(proporcion_poblacional = 0.5, proporcion_muestral = 28/50, significancia = 0.05, estadistico = "proporcion", tipo = "superior", n = 50)
+contraste_hipotesis1(proporcion_poblacional = 0.5, proporcion_muestral = 378/802, n = 802,significancia = 0.07, estadistico = "proporcion", tipo = "inferior")
