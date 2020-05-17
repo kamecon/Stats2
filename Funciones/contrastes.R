@@ -25,6 +25,9 @@ contraste_hipotesis1 <- function(media, media_muestral, proporcion_poblacional, 
   
 # Contrastes de la media de una distribución normal: varianza poblacional conocida 
 
+  library(ggplot2)
+  library(gridExtra)
+  
   if(estadistico == "media"){
   
   if(!is.null(dtc)){
@@ -218,7 +221,7 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
       
       tabla <- data.frame(
         "Concepto" = c("Valor", "Valor crítico inferior", "Valor crítico superior", "Proporción muestral", "Límite inferior", "Límite superior", "p-valor", "significancia"),
-        "Datos"=c(valor, tabla_z*(-1), tabla_z, proporcion_muestral, critico, critico2,  pvalor, significancia)
+        "Datos"=c(valor, tabla_z*(-1), tabla_z, proporcion_muestral, critico1, critico2,  pvalor, significancia)
       )
       
       tabla$Datos <-  round(tabla$Datos, digits = 4)
@@ -226,7 +229,15 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
       tabla[,1] <- NULL
       colnames(tabla) <- ""
       
-      return(tabla) } else {
+      p1 <- ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+        stat_function(fun = dnorm,  size = 1.5) + geom_vline(xintercept = valor, color="red", linetype="dashed", size=1.5) + 
+        stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(-4,tabla_z*(-1))) +
+        stat_function(fun = dnorm, geom="area", fill="turquoise2", alpha=0.4, xlim = c(tabla_z,4)) + 
+        annotation_custom(tableGrob(tabla), xmin=-4, xmax=-2, ymin=0.2, ymax=0.4) +
+        ggtitle("Contraste de hipótesis de la proporción", subtitle = paste0("Cola ", tipo)) +
+        theme_classic()
+      
+      return(list(Resumen =tabla,p1)) } else {
         
         tabla <- data.frame(
           "Concepto" = c("Valor", "Valor crítico", "Proporción muestral", "Límite",  "p-valor", "significancia"),
@@ -268,8 +279,8 @@ pvalor <- pt(abs(valor), df = n-1, lower.tail = FALSE)*2
 # Ejemplos
 
 contraste_hipotesis1(media = 2400, media_muestral = 3593, dtd = 4919, significancia = 0.05, n = 134,estadistico = "media", tipo = "superior")
-contraste_hipotesis1(media = 2400, media_muestral = 3593, dtd = 4919, significancia = 0.05, n = 134,estadistico = "media", tipo = "superior")
 contraste_hipotesis1(media = 5, media_muestral = 4.962, dtc = 0.1, significancia = 0.05, n = 16,estadistico = "media", tipo = "inferior")
 contraste_hipotesis1(media = 80, media_muestral = 83, dtc = 8, significancia = 0.05, n = 25,estadistico = "media", tipo = "superior")
 contraste_hipotesis1(proporcion_poblacional = 0.5, proporcion_muestral = 28/50, significancia = 0.05, estadistico = "proporcion", tipo = "superior", n = 50)
 contraste_hipotesis1(proporcion_poblacional = 0.5, proporcion_muestral = 378/802, n = 802,significancia = 0.07, estadistico = "proporcion", tipo = "inferior")
+contraste_hipotesis1(proporcion_poblacional = 0.5, proporcion_muestral = 104/199, n = 199,significancia = 0.1, estadistico = "proporcion", tipo = "bilateral")
