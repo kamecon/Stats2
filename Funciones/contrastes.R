@@ -4,6 +4,7 @@ contraste_hipotesis1 <- function(media, media_muestral, proporcion_poblacional, 
   # Realiza contrastes de hipótesis para la media y la proporción
   # Autor: Kamal Romero (karomero@ucm.es)
   #
+  # Dependiencias: Necesita las librerias ggplot y gridExtra
   # Args:
   #   media: media poblacional
   #   media_muestral: media muestral
