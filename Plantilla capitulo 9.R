@@ -147,11 +147,11 @@ varianza <-
 confianza <- 
 confianza2 <- (1-confianza)/2
 
-tabla_inf <- qchisq(p = 1-confianza2, df = n-1)
-tabla_sup <- qchisq(p = confianza2, df = n-1)
+tabla_inf <- qchisq(p = confianza2, df = n-1)
+tabla_sup <- qchisq(p = confianza2, df = n-1,lower.tail = FALSE)
 
-LI <- (((n-1)*varianza) / tabla_inf) 
-LS <- (((n-1)*varianza) / tabla_sup) 
+LS <- (((n-1)*varianza) / tabla_inf) 
+LI <- (((n-1)*varianza) / tabla_sup) 
 
 LI
 LS
