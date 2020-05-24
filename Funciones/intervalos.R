@@ -98,7 +98,7 @@ LS <- proporcion + ME
 lim_inf_graf <- proporcion - 5*dt
 lim_sup_graf <- proporcion + 5*dt
 
-x <- seq(from = lim_inf_graf, to = lim_sup_graf, by = 0.05 )
+x <- seq(from = lim_inf_graf, to = lim_sup_graf, by = 0.001 )
 
 # Creamos la distribución normal estándar basados en los datos creados en el paso anterior
 y <- dnorm((x - proporcion) / dt)
@@ -141,7 +141,3 @@ intervalos(media = 75, dt = 20,n = 64, CONOCIDA = TRUE, confianza = .95, estadis
 intervalos(proporcion = 0.759, n = 344, confianza = .9, estadistico = "proporcion")
 
 
-media = 18.68
-dt = 1.69526
-n = 24
-confianza = .9
