@@ -21,6 +21,7 @@ contraste_hipotesis1 <- function(media, media_muestral, proporcion_poblacional, 
   #   Una tabla con el estadístico de contraste (Valor), el valor crítico (Valor crítico), 
   #   la media o proporción muestral, el valor crítco medido en la escala original (Límite)
   #   el p-valor y el nivel de significancia
+  #   Un gráfico con el área de aceptación y la ubicación del estadístico de contraste
   #
   
   

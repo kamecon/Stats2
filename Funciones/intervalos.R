@@ -1,7 +1,26 @@
 
-intervalos <- function(media, proporcion, dt, n, confianza, estadistico = "media", CONOCIDA=TRUE){
+intervalos <- function(media, proporcion, varianza, dt, n, confianza, estadistico = "media", CONOCIDA=TRUE){
+  
+  # Calcula intervalos de confianza para la media, la varianza y la proporción
+  # Autor: Kamal Romero (karomero@ucm.es)
+  #
+  # Dependiencias: Necesita las librerias ggplot, magrittr y gridExtra
+  # Args:
+  #   media: media muestral
+  #   proporcion: proporcion muestral (debe ser un número estre cero y uno)
+  #   dt: desviación típica 
+  #   n: tamaño de la muestra
+  #   confianza: nivel de confianza del intervalo (debe ser un número estre cero y uno)
+  #   estadistico: el estadístico de contraste, de ser "media", "varianza o "proporcion" (default = "media")
+  #
+  # Returns:
+  #   Una tabla con los límites del intervalo
+  #   Un gráfico con la distribución, los límites y la tabla
+  #
+  
 
   library(ggplot2)
+  library(magrittr)
   library(gridExtra)
 
   if(estadistico == "media"){
@@ -94,7 +113,8 @@ df_dist <- data.frame(x=x, y=y)
   
 
   if(estadistico == "proporcion"){
-# Intervalos de confianza para la proporcion muestral
+
+    # Intervalos de confianza para la proporcion muestral
 
 dt <- sqrt((proporcion*(1-proporcion))/n)
 
@@ -147,6 +167,49 @@ p_int <-  ggplot(df_dist, aes(x = x, y = y)) +
 
   }
   
+  if(estadistico == "varianza"){
+    
+    # Intervalos de confianza de la varianza de una distribución normal 
+    
+    confianza2 <- (1-confianza)/2
+    
+    tabla_sup <- qchisq(p = 1-confianza2, df = n-1)
+    tabla_inf <- qchisq(p = confianza2, df = n-1)
+    
+    LS <- (((n-1)*varianza) / tabla_inf) 
+    LI <- (((n-1)*varianza) / tabla_sup) 
+    
+    tablon <- data.frame(
+      "Concepto" = c("Nivel de confianza", "Limite inferior", "Limite superior", "Estadístico"),
+      "Datos"=c(confianza, LI, LS, varianza)
+    )
+    
+    
+    tablon$Datos <-  round(tablon$Datos, digits = 4)
+    rownames(tablon) <- tablon[,1]
+    tablon[,1] <- NULL
+    colnames(tablon) <- ""
+    
+    #Referencia para colocar la leyenda
+    maximo <- dchisq(x = seq(0, tabla_sup+tabla_sup),df = n-1) %>% max()
+    
+    #Dado que la chi-cuadrado no es simétrica se han hecho cambios en los parámetros para colocar la anotación y la tabla
+    
+     p_int <-  ggplot(data.frame(x = c(0, tabla_sup+tabla_sup)), aes(x = x)) +
+       stat_function(fun = dchisq, args = list(df = 24)) +
+       stat_function(fun = dchisq, 
+                     args = list(df = 24),
+                     xlim = c(tabla_inf,tabla_sup),
+                     geom = "area", fill = "turquoise2",
+                     alpha=0.8) +
+       geom_vline(xintercept = tabla_inf,col="red")+geom_vline(xintercept = tabla_sup,col="red")+
+       annotate("text", x = ((tabla_inf+tabla_sup)/2), y = maximo-(maximo/2), label = paste0(as.character(confianza*100), "% de confianza"))+ 
+       ggtitle("Intervalos de confianza de la varianza") +
+       annotation_custom(tableGrob(tablon), xmin=0, xmax=tabla_inf, ymin=maximo-(maximo/2), ymax=maximo)+
+       theme_classic()
+
+  }
+  
   return(list(Resumen =tablon,p_int))
 
 }
@@ -157,5 +220,7 @@ intervalos(media = 18.68, dt = 1.69526, n = 24, CONOCIDA = FALSE, confianza = .9
 intervalos(media = 75, dt = 20,n = 64, CONOCIDA = TRUE, confianza = .95, estadistico = "media")
 # Ejemplo 7.6
 intervalos(proporcion = 0.759, n = 344, confianza = .9, estadistico = "proporcion")
+# Ejemplo 7.8
+intervalos(varianza = 100, n = 25, confianza = .95, estadistico = "varianza")
 
 
