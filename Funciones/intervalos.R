@@ -55,7 +55,7 @@ LS <- media + ME
 lim_inf_graf <- media - 5*(dt / sqrt(n))
 lim_sup_graf <- media + 5*(dt / sqrt(n))
 
-x <- seq(from = lim_inf_graf, to = lim_sup_graf, by = 0.05 )
+x <- seq(from = lim_inf_graf, to = lim_sup_graf, by = 0.01 )
 
 # Creamos la distribución normal estándar basados en los datos creados en el paso anterior
 y <- dt((x - media) / (dt / sqrt(n)), df = gl)
@@ -66,13 +66,29 @@ df_dist <- data.frame(x=x, y=y)
 
     }
     
+    tablon <- data.frame(
+      "Concepto" = c("Nivel de confianza", "Margen de error", "Limite inferior", "Limite superior", "Estadístico"),
+      "Datos"=c(confianza, ME, LI, LS, ifelse(estadistico == "proporcion", proporcion, media))
+    )
+    
+    
+    tablon$Datos <-  round(tablon$Datos, digits = 4)
+    rownames(tablon) <- tablon[,1]
+    tablon[,1] <- NULL
+    colnames(tablon) <- ""
+    
+    
     p_int <-  ggplot(df_dist, aes(x = x, y = y)) +
       geom_line()  +
       geom_vline(xintercept = LI) +
       geom_vline(xintercept = LS) +
       geom_area(mapping = aes(ifelse(x>LI & x<LS,x,0)), fill = "turquoise2", alpha = 0.8) +
       xlim(lim_inf_graf,lim_sup_graf) +
-      annotate("text", x = media, y = 0.15, label = paste0(as.character(confianza*100), "% de confianza"))
+      annotate("text", x = media, y = 0.15, label = paste0(as.character(confianza*100), "% de confianza"))+ 
+      annotation_custom(tableGrob(tablon), xmin=lim_inf_graf, xmax=LI, ymin=0.2, ymax=0.4) +
+      ggtitle("Intervalos de confianza de la media") +
+      theme_classic()
+    
     
   }
   
@@ -106,29 +122,31 @@ y <- dnorm((x - proporcion) / dt)
 # Juntamos ambos vectores y hacemos una tabla (data frame). La libreria ggplot solo toma como argumentos arreglos tabulates de este tipo
 df_dist <- data.frame(x=x, y=y)
 
+tablon <- data.frame(
+  "Concepto" = c("Nivel de confianza", "Margen de error", "Limite inferior", "Limite superior", "Estadístico"),
+  "Datos"=c(confianza, ME, LI, LS, ifelse(estadistico == "proporcion", proporcion, media))
+)
+
+
+tablon$Datos <-  round(tablon$Datos, digits = 4)
+rownames(tablon) <- tablon[,1]
+tablon[,1] <- NULL
+colnames(tablon) <- ""
+
 p_int <-  ggplot(df_dist, aes(x = x, y = y)) +
   geom_line()  +
   geom_vline(xintercept = LI) +
   geom_vline(xintercept = LS) +
   geom_area(mapping = aes(ifelse(x>LI & x<LS,x,0)), fill = "turquoise2", alpha = 0.8) +
   xlim(lim_inf_graf,lim_sup_graf) +
-  annotate("text", x = proporcion, y = 0.15, label = paste0(as.character(confianza*100), "% de confianza"))
+  annotate("text", x = proporcion, y = 0.15, label = paste0(as.character(confianza*100), "% de confianza")) + 
+  annotation_custom(tableGrob(tablon), xmin=lim_inf_graf, xmax=LI, ymin=0.2, ymax=0.4) +
+  ggtitle("Intervalos de confianza de una proporción") +
+  theme_classic()
 
 
   }
   
-  tablon <- data.frame(
-    "Concepto" = c("Nivel de confianza", "Margen de error", "Limite inferior", "Limite superior", "Estadístico"),
-    "Datos"=c(confianza, ME, LI, LS, ifelse(estadistico == "proporcion", proporcion, media))
-  )
-  
-  
-  tablon$Datos <-  round(tablon$Datos, digits = 4)
-  rownames(tablon) <- tablon[,1]
-  tablon[,1] <- NULL
-  colnames(tablon) <- ""
-  
-    
   return(list(Resumen =tablon,p_int))
 
 }
