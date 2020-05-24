@@ -1,5 +1,31 @@
 
 contraste_hipotesis2 <- function(media_x, media_y, p_x, p_y, sigma_x, sigma_y, n_x, n_y, CONOCIDAS=TRUE, IGUALES=TRUE, nula =0, significancia, tipo="superior", estadistico = "media"){
+  
+  # Calcula intervalos de confianza para la diferencia de medias y proporciones
+  # Autor: Kamal Romero (karomero@ucm.es)
+  #
+  # Dependiencias: Necesita las librerias ggplot y gridExtra
+  # Args:
+  #   media_x: media muestra x
+  #   media_y: media muestra y
+  #   p_x: proporcion muestra x (debe ser un número estre cero y uno)
+  #   p_y: proporcion muestra y (debe ser un número estre cero y uno)
+  #   sigma_x: desviación típica muestra x
+  #   sigma_y: desviación típica muestra y
+  #   n_x: tamaño de la muestra x
+  #   n_y: tamaño de la muestra y
+  #   confianza: nivel de confianza del intervalo (debe ser un número estre cero y uno)
+  #   significancia: nivel de significancia del contraste (debe ser un número estre cero y uno)
+  #   estadistico: el estadístico de contraste, de ser "media" o "proporcion" (default = "media")
+  #   tipo: si el tipo de contraste es de cola superior, cola inferior o bilateral (default = "superior")
+  #   CONOCIDAS: TRUE si las varianzas son conocidas y FALSE en caso contrario (default TRUE)
+  #   IGUALES: TRUE si las varianzas son desconocidas e iguales y FALSE en caso contrario (default TRUE)
+  #
+  # Returns:
+  #   Una tabla con los límites del intervalo
+  #   Un gráfico con la distribución, los límites y la tabla
+  #
+  
 
   library(ggplot2)
   library(gridExtra)
